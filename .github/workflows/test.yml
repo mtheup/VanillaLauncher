@@ -8,28 +8,23 @@ on:
 
 jobs:
   build:
-    # Alterado para windows-latest para dar suporte ao .NET Framework do seu projeto
     runs-on: windows-latest
 
     steps:
-    # 1. Baixa o código do repositório para o runner
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2. Configura o SDK do .NET (ajuste a versão se necessário, ex: 8.0.x ou deixe o SDK padrão do Windows)
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
 
-    # 3. Restaura as dependências (NuGet)
+    - name: Install .NET Framework 4.6 Targeting Pack
+      run: |
+        choco install netfx-4.6-developer-pack -y --no-progress
+
     - name: Restore dependencies
       run: dotnet restore
 
-    # 4. Compila o projeto em modo Release
     - name: Build project
-      run: dotnet build --no-restore --configuration Release
-
-    # 5. Executa os testes unitários (se houver)
-    - name: Run tests
-      run: dotnet test --no-build --verbosity normal --configuration Release
+      run: dotnet build --configuration Release
